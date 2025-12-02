@@ -1,0 +1,104 @@
+# ------------------------
+# Node.js (Backend/Auth/Worker)
+# ------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+.pnpm-store/
+
+# Production
+dist/
+build/
+
+# Logs
+logs/
+*.log
+*.log.*
+debug.log
+
+# Environment files
+.env
+.env*.local
+.envrc
+.env.secret
+.env.development
+.env.production
+.env.test
+
+# ------------------------
+# React + Vite Frontend
+# ------------------------
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Vite cache
+.vite/
+*.tsbuildinfo
+
+# ------------------------
+# Docker
+# ------------------------
+docker-compose.override.yml
+.docker/
+docker-data/
+docker-cache/
+
+# ------------------------
+# Kubernetes (infra/k8s)
+# ------------------------
+*.crt
+*.key
+*.pem
+kubeconfig
+infra/k8s/.kube/
+infra/k8s/tmp/
+
+# ------------------------
+# Terraform (infra/terraform)
+# ------------------------
+infra/terraform/.terraform/
+infra/terraform/.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+crash.log
+override.tf
+override.tf.json
+
+# Sensitive files
+*.auto.tfvars
+*.tfvars
+
+# ------------------------
+# Helm (infra/helm)
+# ------------------------
+infra/helm/**/*.tgz
+
+# ------------------------
+# System files
+# ------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.iml
+
+# Backup / temp / cache
+*.swp
+*.swo
+*~
+tmp/
+temp/
+.cache/
+cache/
+
+# Python (just in case a service uses it)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+env/
