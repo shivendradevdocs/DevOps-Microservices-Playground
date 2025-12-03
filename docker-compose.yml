@@ -41,10 +41,15 @@ services:
     environment:
       - PORT=5000
       - MONGO_URL=mongodb://mongo:27017/devops
+      - ENABLE_FILE_LOGS=true
+      - SERVICE_NAME=backend-api
+
     ports:
       - "5002:5000" # host:container
     depends_on:
       - mongo
+    volumes:
+      - ./logs/backend-api:/app/logs
     healthcheck:
       test: ["CMD", "curl", "-f", "http://backend-api:5000/api/health/ready"]
       interval: 10s
