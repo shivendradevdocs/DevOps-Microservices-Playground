@@ -1,5 +1,9 @@
 version: "3.9"
 
+networks:
+  internal_net:
+    driver: bridge
+
 services:
   mongo:
     image: mongo:5
@@ -9,6 +13,13 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal_net
 
   redis:
     image: redis:latest
@@ -16,6 +27,13 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal_net
 
   backend-api:
     build: ./backend-api
@@ -24,9 +42,16 @@ services:
       - PORT=5000
       - MONGO_URL=mongodb://mongo:27017/devops
     ports:
-      - "5002:5000"
+      - "5002:5000" # host:container
     depends_on:
       - mongo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://backend-api:5000/api/health/ready"]
+      interval: 10s
+      timeout: 15s
+      retries: 10
+    networks:
+      - internal_net
 
   auth-service:
     build: ./auth-service
@@ -39,6 +64,13 @@ services:
       - "5001:5001"
     depends_on:
       - mongo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://auth-service:5001/api/auth/ready"]
+      interval: 10s
+      timeout: 15s
+      retries: 10
+    networks:
+      - internal_net
 
   worker-service:
     build: ./worker-service
@@ -47,6 +79,13 @@ services:
       - REDIS_HOST=redis
     depends_on:
       - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://worker-service:6000/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal_net
 
   frontend:
     build: ./frontend
@@ -56,6 +95,8 @@ services:
     depends_on:
       - backend-api
       - auth-service
+    networks:
+      - internal_net
 
 volumes:
   mongo_data:

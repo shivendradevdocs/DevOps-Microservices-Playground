@@ -9,7 +9,9 @@ swaggerDocs(app, PORT);
 dotenv.config();
 
 async function start() {
-  await connectDB();
+  await connectDB().then(() => {
+    app.locals.dbConnected = true;
+  });
   app.listen(PORT, () => {
     console.log(`Auth Service running on port ${PORT}`);
   });

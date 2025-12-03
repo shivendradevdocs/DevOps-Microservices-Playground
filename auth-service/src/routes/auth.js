@@ -55,6 +55,15 @@ import { signup, login } from "../controllers/authController.js";
 
 const router = express.Router();
 
+router.get("/live", (req, res) => res.json({ status: "alive" }));
+
+router.get("/ready", (req, res) => {
+  const mongoConnected = !!req.app.locals.dbConnected;
+  if (!mongoConnected) return res.status(503).json({ status: "not-ready" });
+
+  res.json({ status: "ready" });
+});
+
 router.post("/signup", signup);
 router.post("/login", login);
 

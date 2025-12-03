@@ -7,7 +7,9 @@ const PORT = process.env.PORT || 5005;
 swaggerDocs(app, PORT);
 
 async function start() {
-  await connectDB();
+  await connectDB().then(() => {
+    app.locals.dbConnected = true;
+  });
   app.listen(PORT, () => {
     console.log(`Backend API running on port ${PORT}`);
   });
