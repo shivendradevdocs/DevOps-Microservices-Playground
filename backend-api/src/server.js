@@ -2,9 +2,9 @@ import dotenv from "dotenv";
 import app from "./app.js";
 import connectDB from "./config/db.js";
 import { swaggerDocs } from "./swagger.js";
-const PORT = process.env.PORT || 5000;
-swaggerDocs(app, PORT);
 dotenv.config();
+const PORT = process.env.PORT || 5005;
+swaggerDocs(app, PORT);
 
 async function start() {
   await connectDB();
@@ -14,3 +14,5 @@ async function start() {
 }
 
 start();
+
+//http://localhost:5005/api/health

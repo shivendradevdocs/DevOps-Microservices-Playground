@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:5
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  backend-api:
+    build: ./backend-api
+    container_name: backend-api
+    environment:
+      - PORT=5000
+      - MONGO_URL=mongodb://mongo:27017/devops
+    ports:
+      - "5002:5000"
+    depends_on:
+      - mongo
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    environment:
+      - PORT=5001
+      - MONGO_URL=mongodb://mongo:27017/devops
+      - JWT_SECRET=mysecret
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mongo
+
+  worker-service:
+    build: ./worker-service
+    container_name: worker-service
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend-api
+      - auth-service
+
+volumes:
+  mongo_data:
