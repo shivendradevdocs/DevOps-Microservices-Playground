@@ -2,9 +2,16 @@ import { Worker } from "bullmq";
 import sampleJobProcessor from "./jobs/sampleJob.js";
 import dotenv from "dotenv";
 import express from "express";
+import logger from "./utils/logger.js";
+
 const app = express();
 
 dotenv.config();
+
+// Logging & worker start
+logger.info("Worker Service starting...");
+
+// Health endpoints for Docker & K8s
 app.get("/live", (req, res) => res.json({ status: "alive" }));
 app.get("/ready", (req, res) => res.json({ status: "ready" }));
 
@@ -17,4 +24,11 @@ const connection = {
 
 console.log("Worker service started...");
 
-new Worker("sampleQueue", sampleJobProcessor, { connection });
+new Worker(
+  "sampleQueue",
+  async (job) => {
+    logger.info({ msg: "Job received", jobId: job.id, data: job.data });
+    return await sampleJobProcessor(job);
+  },
+  { connection }
+);

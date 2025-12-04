@@ -4,9 +4,10 @@ import healthRoutes from "./routes/health.js";
 import { httpLogger } from "./middleware/loggerMiddleware.js"; // or httpJsonLogger
 import logger from "./utils/logger.js";
 import itemRoutes from "./routes/items.js";
-
+import errorHandler from "./middleware/errorHandler.js";
 const app = express();
 
+app.use(errorHandler);
 app.use(cors());
 app.use(express.json());
 app.use(httpLogger);

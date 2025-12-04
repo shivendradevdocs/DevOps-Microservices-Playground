@@ -52,7 +52,9 @@
 
 import express from "express";
 import { signup, login } from "../controllers/authController.js";
-
+import { signupSchema, loginSchema } from "../validation/authValidation.js";
+import validate from "../middleware/validate.js";
+import asyncHandler from "../utils/asyncHandler.js";
 const router = express.Router();
 
 router.get("/live", (req, res) => res.json({ status: "alive" }));
@@ -64,7 +66,7 @@ router.get("/ready", (req, res) => {
   res.json({ status: "ready" });
 });
 
-router.post("/signup", signup);
-router.post("/login", login);
+router.post("/signup", validate(signupSchema), asyncHandler(signup));
+router.post("/login", validate(loginSchema), asyncHandler(login));
 
 export default router;

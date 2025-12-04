@@ -9,9 +9,14 @@ swaggerDocs(app, PORT);
 dotenv.config();
 
 async function start() {
-  await connectDB().then(() => {
-    app.locals.dbConnected = true;
-  });
+  await connectDB()
+    .then(() => {
+      app.locals.dbConnected = true;
+      console.log("Mongo connected for Auth Service");
+    })
+    .catch((err) => {
+      logger.error({ msg: "Mongo connection failed", error: err.message });
+    });
   app.listen(PORT, () => {
     console.log(`Auth Service running on port ${PORT}`);
   });
