@@ -1,3 +1,25 @@
+/**
+ * @openapi
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+/**
+ * @openapi
+ * /api/items:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get all items
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+
 import express from "express";
 import asyncHandler from "../utils/asyncHandler.js";
 import validate from "../middleware/validate.js";
@@ -5,6 +27,7 @@ import {
   createItemSchema,
   updateItemSchema,
 } from "../validation/itemValidation.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 import {
   createItem,
@@ -21,10 +44,20 @@ const router = express.Router();
 // router.put("/:id", updateItem);
 // router.delete("/:id", deleteItem);
 
-router.post("/", validate(createItemSchema), asyncHandler(createItem));
-router.get("/", asyncHandler(getAllItems));
-router.get("/:id", asyncHandler(getOneItem));
-router.put("/:id", validate(updateItemSchema), asyncHandler(updateItem));
-router.delete("/:id", asyncHandler(deleteItem));
+router.post(
+  "/",
+  authMiddleware,
+  validate(createItemSchema),
+  asyncHandler(createItem)
+);
+router.get("/", authMiddleware, asyncHandler(getAllItems));
+router.get("/:id", authMiddleware, asyncHandler(getOneItem));
+router.put(
+  "/:id",
+  authMiddleware,
+  validate(updateItemSchema),
+  asyncHandler(updateItem)
+);
+router.delete("/:id", authMiddleware, asyncHandler(deleteItem));
 
 export default router;

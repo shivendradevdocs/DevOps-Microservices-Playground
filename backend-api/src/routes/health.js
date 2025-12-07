@@ -10,6 +10,18 @@
  *         description: Service is running
  */
 
+/**
+ * @openapi
+ * /api/items:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get all items
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+
 import express from "express";
 import { healthCheck } from "../controllers/healthController.js";
 

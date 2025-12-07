@@ -43,6 +43,7 @@ services:
       - MONGO_URL=mongodb://mongo:27017/devops
       - ENABLE_FILE_LOGS=true
       - SERVICE_NAME=backend-api
+      - JWT_SECRET=mysecret
 
     ports:
       - "5002:5000" # host:container
