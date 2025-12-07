@@ -55,6 +55,8 @@ import { signup, login } from "../controllers/authController.js";
 import { signupSchema, loginSchema } from "../validation/authValidation.js";
 import validate from "../middleware/validate.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import User from "../models/User.js";
+import bcrypt from "bcrypt";
 const router = express.Router();
 
 router.get("/live", (req, res) => res.json({ status: "alive" }));
@@ -69,4 +71,18 @@ router.get("/ready", (req, res) => {
 router.post("/signup", validate(signupSchema), asyncHandler(signup));
 router.post("/login", validate(loginSchema), asyncHandler(login));
 
+router.post("/create-admin", async (req, res) => {
+  const user = await User.create({
+    email: req.body.email,
+    password: await bcrypt.hash(req.body.password, 10),
+    role: "admin",
+  });
+
+  res.json({ msg: "Admin created", userId: user._id });
+});
 export default router;
+
+// {
+//     "email": "userx@test.com",
+//     "password": "123456"
+//   }

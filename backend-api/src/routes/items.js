@@ -28,7 +28,7 @@ import {
   updateItemSchema,
 } from "../validation/itemValidation.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-
+import { requireRole } from "../middleware/roleMiddleware.js";
 import {
   createItem,
   getAllItems,
@@ -52,12 +52,21 @@ router.post(
 );
 router.get("/", authMiddleware, asyncHandler(getAllItems));
 router.get("/:id", authMiddleware, asyncHandler(getOneItem));
+
+//admin only routes
+
+// admin only
 router.put(
   "/:id",
   authMiddleware,
-  validate(updateItemSchema),
+  requireRole("admin"),
   asyncHandler(updateItem)
 );
-router.delete("/:id", authMiddleware, asyncHandler(deleteItem));
+router.delete(
+  "/:id",
+  authMiddleware,
+  requireRole("admin"),
+  asyncHandler(deleteItem)
+);
 
 export default router;
