@@ -4,7 +4,7 @@ import Signup from "./pages/Signup";
 import Items from "./pages/Items";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
-import "./styles/buttons.css";
+import "./styles/global.css";
 
 function App() {
   return (

@@ -1,43 +1,41 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { apiGet, apiPostBackend } from "../services/api";
+import api from "../services/http";
+import toast from "react-hot-toast";
 
 export default function Items() {
-  const { token, role } = useContext(AuthContext);
+  const { role } = useContext(AuthContext);
   const [items, setItems] = useState([]);
   const [title, setTitle] = useState("");
+  const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
 
   async function loadItems() {
-    const data = await apiGet(token, "/api/items");
-    setItems(data);
+    try {
+      const res = await api.get("/api/items");
+      setItems(res.data);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function addItem() {
-    await apiPostBackend(token, "/api/items", { title });
+    await api.post("/api/items", { title });
+    toast.success("Item added");
     setTitle("");
     loadItems();
   }
 
   async function deleteItem(id) {
-    await fetch(import.meta.env.VITE_BACKEND_URL + "/api/items/" + id, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    await api.delete("/api/items/" + id);
+    toast.success("Item deleted");
     loadItems();
   }
 
   async function updateItem(id) {
-    await fetch(import.meta.env.VITE_BACKEND_URL + "/api/items/" + id, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title: editTitle }),
-    });
-
+    await api.put("/api/items/" + id, { title: editTitle });
+    toast.success("Item updated");
     setEditingId(null);
     loadItems();
   }
@@ -45,6 +43,8 @@ export default function Items() {
   useEffect(() => {
     loadItems();
   }, []);
+
+  if (loading) return <h3>Loading items...</h3>;
 
   return (
     <div style={{ padding: 20 }}>
@@ -56,6 +56,8 @@ export default function Items() {
         onChange={(e) => setTitle(e.target.value)}
       />
       <button onClick={addItem}>Add Item</button>
+
+      <hr />
 
       <ul>
         {items.map((item) => (
@@ -74,7 +76,6 @@ export default function Items() {
                 {item.title}
                 {role === "admin" && (
                   <>
-                    &nbsp;
                     <button
                       onClick={() => {
                         setEditingId(item._id);
@@ -83,7 +84,6 @@ export default function Items() {
                     >
                       Edit
                     </button>
-                    &nbsp;
                     <button onClick={() => deleteItem(item._id)}>Delete</button>
                   </>
                 )}
